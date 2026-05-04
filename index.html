@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Rosana ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap');
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Quicksand', sans-serif; background-color: #fff0f3; color: #ff4d6d; }
+        .bg-hearts { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .heart { position: absolute; color: #ffb3c1; font-size: 20px; animation: fall linear infinite; opacity: 0.7; }
+        @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); } 100% { transform: translateY(110vh) rotate(360deg); } }
+        .screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; text-align: center; padding: 20px; box-sizing: border-box; }
+        .screen.active { display: flex; }
+        h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; margin-bottom: 20px; }
+        h2 { font-size: 2rem; margin-bottom: 30px; }
+        button { background-color: #ff758f; color: white; border: none; padding: 15px 30px; font-size: 1.2rem; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3); z-index: 10; margin: 10px; }
+        .fade-out { opacity: 0 !important; pointer-events: none !important; transform: scale(0); }
+        
+        /* Reason Jar Styles */
+        #jar { font-size: 100px; cursor: pointer; transition: transform 0.2s; }
+        #jar:active { transform: scale(0.9); }
+        #reason-text { font-size: 1.5rem; font-weight: 600; margin-top: 20px; min-height: 60px; color: #d02090; }
+
+        /* Polaroid Styles - Updated for side-by-side and juggle animation */
+        .album { display: flex; justify-content: center; align-items: center; gap: 20px; height: 300px; margin-top: 20px; width: 100%; }
+        .polaroid { background: white; padding: 10px 10px 30px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: juggle 4s ease-in-out infinite; width: 160px; transition: transform 0.3s ease-in-out; }
+        .polaroid img { width: 100%; height: 160px; object-fit: cover; }
+        
+        /* Each polaroid has a slightly different animation start and rotation */
+        .p1 { animation-delay: 0s; transform: rotate(-5deg); }
+        .p2 { animation-delay: 0.5s; transform: rotate(0deg); }
+        .p3 { animation-delay: 1s; transform: rotate(5deg); }
+
+        /* Subtle hover effect to bring focus to a photo */
+        .polaroid:hover { transform: scale(1.1) rotate(0deg) !important; z-index: 10; animation-play-state: paused; }
+
+        @keyframes juggle {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            25% { transform: translateY(-10px) rotate(0deg); }
+            50% { transform: translateY(0) rotate(5deg); }
+            75% { transform: translateY(-5px) rotate(0deg); }
+        }
+
+        /* Countdown Style */
+        #countdown { position: fixed; bottom: 20px; width: 100%; text-align: center; font-weight: bold; font-size: 1.1rem; color: #ff758f; }
+    </style>
+</head>
+<body>
+    <div class="bg-hearts" id="bg-hearts"></div>
+
+    <div class="screen active" id="screen-start">
+        <h1>this is for rosana ❤️</h1>
+        <button onclick="nextScreen('screen-q1')">Start</button>
+    </div>
+
+    <div class="screen" id="screen-q1">
+        <h2>do you like me?</h2>
+        <div style="position:relative; height:100px; width:100%;">
+            <button onclick="nextScreen('screen-q2')">Yes</button>
+            <button id="no-btn" onmouseover="moveNoBtn()" style="position:absolute; background-color:#ffb3c1;">No</button>
+        </div>
+    </div>
+
+    <div class="screen" id="screen-q2">
+        <h2>on a scale from 1-10...</h2>
+        <div id="scale-grid" style="display:grid; grid-template-columns: repeat(5,1fr); gap:10px;"></div>
+        <div id="scale-res" style="display:none;">
+            <h2>jippiieeee, me too!!</h2>
+            <button onclick="nextScreen('screen-quiz')">Next</button>
+        </div>
+    </div>
+
+    <div class="screen" id="screen-quiz">
+        <h2>whats the first thing you will cook me?</h2>
+        <div id="quiz-box" style="display:flex; flex-direction:column;">
+            <button onclick="this.classList.add('fade-out')">air sandwiches</button>
+            <button id="correct-quiz" onclick="rightQuiz()">the best pb&j in the world</button>
+            <button onclick="this.classList.add('fade-out')">dry ass chicken</button>
+        </div>
+        <div id="quiz-res" style="display:none;">
+            <h2>awww baby! i knew it!</h2>
+            <button onclick="nextScreen('screen-jar')">Next</button>
+        </div>
+    </div>
+
+    <!-- Reason Jar Screen -->
+    <div class="screen" id="screen-jar">
+        <h2>Reasons why I like you...</h2>
+        <p>(Tap the jar to see them all!)</p>
+        <div id="jar">🫙</div>
+        <div id="reason-text">Click the jar!</div>
+        <button id="jar-next" style="display:none;" onclick="nextScreen('screen-final')">Final Surprise</button>
+    </div>
+
+    <div class="screen" id="screen-final">
+        <h1>ay mes you</h1>
+        <div class="album">
+            <div class="polaroid p1"><img src="foto1.jpg" alt="Memory 1"></div>
+            <div class="polaroid p2"><img src="foto2.jpg" alt="Memory 2"></div>
+            <div class="polaroid p3"><img src="foto3.jpg" alt="Memory 3"></div>
+        </div>
+        <h2>See you soon!</h2>
+    </div>
+
+    <div id="countdown">Loading Countdown...</div>
+
+    <script>
+        // Hearts Background
+        function createHearts() {
+            const container = document.getElementById('bg-hearts');
+            for(let i=0; i<25; i++) {
+                const h = document.createElement('div');
+                h.className='heart'; h.innerHTML='❤️';
+                h.style.left = Math.random()*100+'vw';
+                h.style.animationDuration = (Math.random()*3+2)+'s';
+                h.style.animationDelay = Math.random()*5+'s';
+                container.appendChild(h);
+            }
+        }
+        createHearts();
+
+        function nextScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function moveNoBtn() {
+            const btn = document.getElementById('no-btn');
+            btn.style.position = 'fixed';
+            btn.style.left = Math.random()*(window.innerWidth-100)+'px';
+            btn.style.top = Math.random()*(window.innerHeight-100)+'px';
+        }
+
+        // Scale Logic
+        const grid = document.getElementById('scale-grid');
+        for(let i=1; i<=10; i++) {
+            const b = document.createElement('button'); b.innerText = i;
+            b.onclick = function() {
+                if(i===10) {
+                    grid.style.display='none';
+                    document.getElementById('scale-res').style.display='block';
+                } else { this.classList.add('fade-out'); }
+            };
+            grid.appendChild(b);
+        }
+
+        function rightQuiz() {
+            document.getElementById('quiz-box').style.display='none';
+            document.getElementById('quiz-res').style.display='block';
+        }
+
+        // Jar Logic
+        const reasons = [
+            "the way you look at me", "your smile", "the way we kiss",
+            "the way you touch me", "your laugh", "your hands",
+            "you getting nervous when i look into your eyes too long",
+            "the way you hug me", "your voice", "how you always know what im thinking"
+        ];
+        let reasonIdx = 0;
+        document.getElementById('jar').onclick = function() {
+            if(reasonIdx < reasons.length) {
+                document.getElementById('reason-text').innerText = reasons[reasonIdx];
+                reasonIdx++;
+                if(reasonIdx === reasons.length) {
+                    document.getElementById('jar-next').style.display = 'inline-block';
+                    this.innerHTML = '🏺✨';
+                }
+            }
+        };
+
+        // Countdown Logic (Target: June 15, 2026, 19:00 EDT / 23:00 UTC)
+        const targetDate = new Date("2026-06-15T23:00:00Z").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+            if (diff < 0) {
+                document.getElementById('countdown').innerText = "I'm with you! ❤️";
+                return;
+            }
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+            document.getElementById('countdown').innerText = `T-Minus: ${days}d ${hours}h ${mins}m ${secs}s until I see you`;
+        }, 1000);
+    </script>
+</body>
+</html>
