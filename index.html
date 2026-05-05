@@ -6,77 +6,108 @@
     <title>For Rosana ❤️</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap');
+        
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Quicksand', sans-serif; background-color: #fff0f3; color: #ff4d6d; }
         .bg-hearts { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
         .heart { position: absolute; color: #ffb3c1; font-size: 20px; animation: fall linear infinite; opacity: 0.7; }
         @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); } 100% { transform: translateY(110vh) rotate(360deg); } }
-        .screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; text-align: center; padding: 20px; box-sizing: border-box; }
+
+        .screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; text-align: center; padding: 20px; box-sizing: border-box; overflow-y: auto; }
         .screen.active { display: flex; }
         h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; margin-bottom: 20px; }
-        h2 { font-size: 2rem; margin-bottom: 30px; }
-        button { background-color: #ff758f; color: white; border: none; padding: 15px 30px; font-size: 1.2rem; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3); z-index: 10; margin: 10px; }
-        .fade-out { opacity: 0 !important; pointer-events: none !important; transform: scale(0); }
+        h2 { font-size: 1.8rem; margin-bottom: 30px; }
         
-        /* Reason Jar Styles */
-        #jar { font-size: 100px; cursor: pointer; transition: transform 0.2s; }
-        #jar:active { transform: scale(0.9); }
-        #reason-text { font-size: 1.5rem; font-weight: 600; margin-top: 20px; min-height: 60px; color: #d02090; }
+        button { background-color: #ff758f; color: white; border: none; padding: 15px 30px; font-size: 1.1rem; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3); z-index: 10; margin: 10px; min-width: 200px; }
+        .back-btn { background-color: #ffb3c1; margin-top: 20px; min-width: 100px; }
 
-        /* Polaroid Styles - Updated for side-by-side and juggle animation */
-        .album { display: flex; justify-content: center; align-items: center; gap: 20px; height: 300px; margin-top: 20px; width: 100%; }
-        .polaroid { background: white; padding: 10px 10px 30px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: juggle 4s ease-in-out infinite; width: 160px; transition: transform 0.3s ease-in-out; }
-        .polaroid img { width: 100%; height: 160px; object-fit: cover; }
-        
-        /* Each polaroid has a slightly different animation start and rotation */
-        .p1 { animation-delay: 0s; transform: rotate(-5deg); }
-        .p2 { animation-delay: 0.5s; transform: rotate(0deg); }
-        .p3 { animation-delay: 1s; transform: rotate(5deg); }
+        .nav-menu { display: grid; grid-template-columns: 1fr; gap: 10px; width: 80%; max-width: 300px; }
+        .nav-item { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; font-weight: bold; border: 2px solid transparent; transition: 0.3s; }
+        .nav-item:hover { border-color: #ff758f; transform: scale(1.05); }
 
-        /* Subtle hover effect to bring focus to a photo */
-        .polaroid:hover { transform: scale(1.1) rotate(0deg) !important; z-index: 10; animation-play-state: paused; }
+        #game-area { width: 100%; height: 300px; background: white; border-radius: 20px; position: relative; overflow: hidden; border: 2px dashed #ff758f; margin-bottom: 10px; max-width: 400px; }
+        .game-target { position: absolute; font-size: 35px; cursor: pointer; user-select: none; }
 
-        @keyframes juggle {
-            0%, 100% { transform: translateY(0) rotate(-5deg); }
-            25% { transform: translateY(-10px) rotate(0deg); }
-            50% { transform: translateY(0) rotate(5deg); }
-            75% { transform: translateY(-5px) rotate(0deg); }
-        }
+        .clock-container { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .clock-box { background: white; padding: 15px; border-radius: 15px; border: 2px solid #ff758f; min-width: 120px; }
+        .time { font-size: 1.5rem; font-weight: bold; }
+        .small-note { font-size: 0.8rem; opacity: 0.8; margin-top: 10px; font-style: italic; }
 
-        /* Countdown Style */
-        #countdown { position: fixed; bottom: 20px; width: 100%; text-align: center; font-weight: bold; font-size: 1.1rem; color: #ff758f; }
+        .album { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; min-height: 200px; }
+        .polaroid { background: white; padding: 10px 10px 30px 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); border-radius: 2px; }
+        .polaroid img { width: 100px; height: 120px; object-fit: cover; border: 1px solid #eee; background: #eee; }
+        .p1 { transform: rotate(-10deg); }
+        .p2 { transform: translateY(-20px) rotate(5deg); }
+        .p3 { transform: rotate(10deg); }
+
+        #diary-trigger { position: fixed; bottom: 80px; left: 20px; z-index: 1000; }
+        #diary-btn { background: #ff758f; border: 2px solid #fff; border-radius: 15px; padding: 10px 15px; cursor: pointer; color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        #screen-diary { background-color: #fff0f3; z-index: 2000; justify-content: flex-start; padding-top: 40px; }
+        .diary-container { width: 95%; height: 70vh; background: white; border: 3px solid #ff758f; border-radius: 20px; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        #countdown { position: fixed; bottom: 20px; width: 100%; text-align: center; font-weight: bold; font-size: 0.9rem; color: #ff758f; z-index: 100; background: rgba(255, 240, 243, 0.9); padding: 5px 0; }
     </style>
 </head>
 <body>
     <div class="bg-hearts" id="bg-hearts"></div>
 
-    <div class="screen active" id="screen-start">
-        <h1>this is for rosana ❤️</h1>
-        <button onclick="nextScreen('screen-q1')">Start</button>
+    <div id="diary-trigger">
+        <button id="diary-btn" onclick="openDiary()">📖 Our Diary</button>
     </div>
 
+    <!-- START SCREEN -->
+    <div class="screen active" id="screen-start">
+        <h1 id="greeting-text">hi rosana ❤️</h1>
+        <button onclick="nextScreen('screen-nav')">Start Now</button>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="screen" id="screen-nav">
+        <h1>Main Menu</h1>
+        <div class="nav-menu">
+            <div class="nav-item" onclick="nextScreen('screen-q1')">❤️ Play the Love Quiz</div>
+            <div class="nav-item" onclick="nextScreen('screen-game')">💋 Catch Kisses Game</div>
+            <div class="nav-item" onclick="nextScreen('screen-worlds')">🌎 Our Worlds (Clocks)</div>
+            <div class="nav-item" onclick="nextScreen('screen-open')">✉️ Open When...</div>
+        </div>
+    </div>
+
+    <!-- KISS GAME -->
+    <div class="screen" id="screen-game">
+        <h2>Catch my kisses!</h2>
+        <div id="game-area"></div>
+        <p>Kisses caught: <span id="score">0</span></p>
+        <button onclick="startGame()">Start Game</button>
+        <button class="back-btn" onclick="nextScreen('screen-nav')">Back</button>
+    </div>
+
+    <!-- QUIZ 1 -->
     <div class="screen" id="screen-q1">
         <h2>do you like me?</h2>
         <div style="position:relative; height:100px; width:100%;">
             <button onclick="nextScreen('screen-q2')">Yes</button>
-            <button id="no-btn" onmouseover="moveNoBtn()" style="position:absolute; background-color:#ffb3c1;">No</button>
+            <button id="no-btn" onmouseover="moveNoBtn()" style="position:absolute; background-color:#ffb3c1; left: 55%; min-width: 80px;">No</button>
         </div>
     </div>
 
+    <!-- QUIZ 2 (Scale) -->
     <div class="screen" id="screen-q2">
         <h2>on a scale from 1-10...</h2>
         <div id="scale-grid" style="display:grid; grid-template-columns: repeat(5,1fr); gap:10px;"></div>
         <div id="scale-res" style="display:none;">
             <h2>jippiieeee, me too!!</h2>
-            <button onclick="nextScreen('screen-quiz')">Next</button>
+            <button onclick="nextScreen('screen-quiz-cook')">Next</button>
         </div>
     </div>
 
-    <div class="screen" id="screen-quiz">
+    <!-- QUIZ 3 (Cook) -->
+    <div class="screen" id="screen-quiz-cook">
         <h2>whats the first thing you will cook me?</h2>
-        <div id="quiz-box" style="display:flex; flex-direction:column;">
-            <button onclick="this.classList.add('fade-out')">air sandwiches</button>
-            <button id="correct-quiz" onclick="rightQuiz()">the best pb&j in the world</button>
-            <button onclick="this.classList.add('fade-out')">dry ass chicken</button>
+        <div id="quiz-box">
+            <button onclick="this.style.opacity='0'">air sandwiches</button><br>
+            <button onclick="rightQuiz()">the best pb&j in the world</button><br>
+            <button onclick="this.style.opacity='0'">dry ass chicken</button>
         </div>
         <div id="quiz-res" style="display:none;">
             <h2>awww baby! i knew it!</h2>
@@ -84,105 +115,138 @@
         </div>
     </div>
 
-    <!-- Reason Jar Screen -->
+    <!-- JAR -->
     <div class="screen" id="screen-jar">
         <h2>Reasons why I like you...</h2>
-        <p>(Tap the jar to see them all!)</p>
-        <div id="jar">🫙</div>
-        <div id="reason-text">Click the jar!</div>
+        <div id="jar" style="cursor:pointer; font-size: 80px;">🫙</div>
+        <div id="reason-text">Tap the jar!</div>
         <button id="jar-next" style="display:none;" onclick="nextScreen('screen-final')">Final Surprise</button>
     </div>
 
+    <!-- WORLD CLOCKS -->
+    <div class="screen" id="screen-worlds">
+        <h2>No matter the distance...</h2>
+        <div class="clock-container">
+            <div class="clock-box"><div>DE Time</div><div class="time" id="time-de">--:--</div></div>
+            <div class="clock-box"><div>NY Time</div><div class="time" id="time-us">--:--</div></div>
+        </div>
+        <p>we share the same moon. 🌙</p>
+        <div class="small-note">(i choose NY time bc your moving there soon! <3)</div>
+        <button class="back-btn" onclick="nextScreen('screen-nav')">Back</button>
+    </div>
+
+    <!-- OPEN WHEN -->
+    <div class="screen" id="screen-open">
+        <h2>Open when...</h2>
+        <button onclick="alert('I am always right here in your heart. ❤️')">...you miss me</button><br>
+        <button onclick="alert('Sweet dreams, baby. 😴')">...you can't sleep</button><br>
+        <button onclick="alert('You are the best thing that ever happened to me. 💍')">...you need a reminder</button>
+        <button class="back-btn" onclick="nextScreen('screen-nav')">Back</button>
+    </div>
+
+    <!-- FINAL SCREEN (Polaroids) -->
     <div class="screen" id="screen-final">
         <h1>ay mes you</h1>
         <div class="album">
-            <div class="polaroid p1"><img src="foto1.jpg" alt="Memory 1"></div>
-            <div class="polaroid p2"><img src="foto2.jpg" alt="Memory 2"></div>
-            <div class="polaroid p3"><img src="foto3.jpg" alt="Memory 3"></div>
+            <div class="polaroid p1"><img src="foto1.jpg" alt="❤️"></div>
+            <div class="polaroid p2"><img src="foto2.jpg" alt="❤️"></div>
+            <div class="polaroid p3"><img src="foto3.jpg" alt="❤️"></div>
         </div>
-        <h2>See you soon!</h2>
+        <button class="back-btn" onclick="nextScreen('screen-nav')">Back to Menu</button>
     </div>
 
-    <div id="countdown">Loading Countdown...</div>
+    <!-- DIARY -->
+    <div class="screen" id="screen-diary">
+        <h1 style="font-size: 1.5rem;">write me a message!</h1>
+        <div class="diary-container">
+            <iframe src="https://padlet.com/embed/i2nh0yql9escahmo"></iframe>
+        </div>
+        <button class="back-btn" onclick="closeDiary()">← Back</button>
+    </div>
+
+    <div id="countdown">Loading...</div>
 
     <script>
-        // Hearts Background
+        let lastScreenId = 'screen-start';
+        let score = 0;
+        let gameActive = false;
+
+        // Dynamic Greeting
+        const hour = new Date().getHours();
+        const gText = document.getElementById('greeting-text');
+        if (hour >= 5 && hour < 12) gText.innerText = "good morning, beautiful ❤️";
+        else if (hour >= 12 && hour < 18) gText.innerText = "hope your day is amazing ❤️";
+        else if (hour >= 18 && hour < 22) gText.innerText = "good evening, my love ❤️";
+        else gText.innerText = "sweet dreams, baby 🌙";
+
         function createHearts() {
             const container = document.getElementById('bg-hearts');
-            for(let i=0; i<25; i++) {
-                const h = document.createElement('div');
-                h.className='heart'; h.innerHTML='❤️';
-                h.style.left = Math.random()*100+'vw';
-                h.style.animationDuration = (Math.random()*3+2)+'s';
-                h.style.animationDelay = Math.random()*5+'s';
+            for(let i=0; i<20; i++) {
+                const h = document.createElement('div'); h.className='heart'; h.innerHTML='❤️';
+                h.style.left = Math.random()*100+'vw'; h.style.animationDuration = (Math.random()*3+2)+'s';
                 container.appendChild(h);
             }
         }
         createHearts();
 
         function nextScreen(id) {
+            if(id !== 'screen-diary') lastScreenId = id;
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
-        function moveNoBtn() {
-            const btn = document.getElementById('no-btn');
-            btn.style.position = 'fixed';
-            btn.style.left = Math.random()*(window.innerWidth-100)+'px';
-            btn.style.top = Math.random()*(window.innerHeight-100)+'px';
+        function openDiary() { document.getElementById('diary-trigger').style.display = 'none'; nextScreen('screen-diary'); }
+        function closeDiary() { document.getElementById('diary-trigger').style.display = 'block'; nextScreen(lastScreenId); }
+
+        function startGame() {
+            if(gameActive) return;
+            gameActive = true; score = 0; document.getElementById('score').innerText = score;
+            let timer = setInterval(() => {
+                const k = document.createElement('div'); k.className='game-target'; k.innerHTML='💋';
+                k.style.left = Math.random()*80+'%'; k.style.top = Math.random()*80+'%';
+                k.onclick = () => { score++; document.getElementById('score').innerText = score; k.remove(); };
+                document.getElementById('game-area').appendChild(k);
+                setTimeout(() => k.remove(), 1000);
+            }, 700);
+            setTimeout(() => { clearInterval(timer); gameActive = false; alert("Caught " + score + " kisses!"); }, 10000);
         }
 
-        // Scale Logic
+        function moveNoBtn() {
+            const b = document.getElementById('no-btn');
+            b.style.left = Math.random()*70+'%'; b.style.top = Math.random()*70+'%';
+        }
+
         const grid = document.getElementById('scale-grid');
         for(let i=1; i<=10; i++) {
-            const b = document.createElement('button'); b.innerText = i;
-            b.onclick = function() {
-                if(i===10) {
-                    grid.style.display='none';
-                    document.getElementById('scale-res').style.display='block';
-                } else { this.classList.add('fade-out'); }
-            };
+            const b = document.createElement('button'); b.innerText = i; b.style.minWidth="40px";
+            b.onclick = () => { if(i===10) { grid.style.display='none'; document.getElementById('scale-res').style.display='block'; } else b.style.opacity='0'; };
             grid.appendChild(b);
         }
 
-        function rightQuiz() {
-            document.getElementById('quiz-box').style.display='none';
-            document.getElementById('quiz-res').style.display='block';
-        }
+        function rightQuiz() { document.getElementById('quiz-box').style.display='none'; document.getElementById('quiz-res').style.display='block'; }
 
-        // Jar Logic
-        const reasons = [
-            "the way you look at me", "your smile", "the way we kiss",
-            "the way you touch me", "your laugh", "your hands",
-            "you getting nervous when i look into your eyes too long",
-            "the way you hug me", "your voice", "how you always know what im thinking"
-        ];
-        let reasonIdx = 0;
-        document.getElementById('jar').onclick = function() {
-            if(reasonIdx < reasons.length) {
-                document.getElementById('reason-text').innerText = reasons[reasonIdx];
-                reasonIdx++;
-                if(reasonIdx === reasons.length) {
-                    document.getElementById('jar-next').style.display = 'inline-block';
-                    this.innerHTML = '🏺✨';
-                }
-            }
+        function updateClocks() {
+            const now = new Date();
+            document.getElementById('time-de').innerText = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit', timeZone:'Europe/Berlin'});
+            document.getElementById('time-us').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', timeZone:'America/New_York'});
+        }
+        setInterval(updateClocks, 1000); updateClocks();
+
+        const reasons = ["your smile", "the way you look at me", "your laugh", "your kindness", "how you make me feel"];
+        let rIdx = 0;
+        document.getElementById('jar').onclick = () => {
+            if(rIdx < reasons.length) { document.getElementById('reason-text').innerText = reasons[rIdx]; rIdx++; }
+            if(rIdx === reasons.length) { document.getElementById('jar-next').style.display='inline-block'; }
         };
 
-        // Countdown Logic (Target: June 15, 2026, 19:00 EDT / 23:00 UTC)
-        const targetDate = new Date("2026-06-15T23:00:00Z").getTime();
+        const target = new Date("2026-06-15T23:00:00Z").getTime();
         setInterval(() => {
-            const now = new Date().getTime();
-            const diff = targetDate - now;
-            if (diff < 0) {
-                document.getElementById('countdown').innerText = "I'm with you! ❤️";
-                return;
-            }
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const secs = Math.floor((diff % (1000 * 60)) / 1000);
-            document.getElementById('countdown').innerText = `T-Minus: ${days}d ${hours}h ${mins}m ${secs}s until I see you`;
+            const diff = target - new Date().getTime();
+            const d = Math.floor(diff / 86400000);
+            const h = Math.floor((diff % 86400000) / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            document.getElementById('countdown').innerText = `T-Minus: ${d}d ${h}h ${m}m ${s}s`;
         }, 1000);
     </script>
 </body>
