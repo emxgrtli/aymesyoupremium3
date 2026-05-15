@@ -48,9 +48,39 @@
         .diary-container { width: 95%; height: 70vh; background: white; border: 3px solid #ff758f; border-radius: 20px; overflow: hidden; }
         iframe { width: 100%; height: 100%; border: none; }
         #countdown { position: fixed; bottom: 20px; width: 100%; text-align: center; font-weight: bold; font-size: 0.9rem; color: #ff758f; z-index: 100; background: rgba(255, 240, 243, 0.9); padding: 5px 0; }
+
+        /* EASTER EGG STYLES */
+        #easter-egg-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99999; pointer-events: none; background: #fff0f3; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .countdown-headline { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: #ff4d6d; text-shadow: 0 4px 10px rgba(255, 117, 143, 0.2); padding: 15px 30px; max-width: 85%; z-index: 100001; animation: pulse 2s infinite ease-in-out; }
+        .falling-egg { position: absolute; font-size: 30px; animation: fall linear infinite; opacity: 0.8; }
+        
+        #suki-companion { position: fixed; bottom: 70px; right: 25px; z-index: 999; width: 100px; display: flex; flex-direction: column; align-items: flex-end; pointer-events: none; }
+        .suki-cat { font-size: 55px; display: inline-block; transition: all 0.5s ease; transform-origin: bottom center; margin-right: 15px; }
+        .suki-arrow { background: white; color: #ff4d6d; border: 2px solid #ff758f; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; white-space: nowrap; margin-bottom: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); position: relative; align-self: center; transform: translateX(5px); }
+        .suki-arrow::after { content: '▼'; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); color: #ff758f; font-size: 10px; }
+
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        /* Suki Custom Animations */
+        .suki-jump { animation: sukiJumpAnim 0.6s ease; }
+        .suki-wiggle { animation: sukiWiggleAnim 0.8s ease-in-out 2; }
+        .suki-spin { animation: sukiSpinAnim 0.7s ease-in-out; }
+        @keyframes sukiJumpAnim { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-25px) scaleY(1.1); } }
+        @keyframes sukiWiggleAnim { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
+        @keyframes sukiSpinAnim { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } 100% { transform: rotate(360deg) scale(1); } }
     </style>
 </head>
 <body>
+    <!-- EASTER EGG OVERLAY (STAYS COMFORTABLY IN FULLSCREEN FOR 7 SECONDS) -->
+    <div id="easter-egg-overlay">
+        <div class="countdown-headline">only 30 days left baby, we got this!! &lt;3</div>
+    </div>
+
+    <!-- PERMANENT SUKI COMPANION -->
+    <div id="suki-companion">
+        <div class="suki-arrow">this is suki hehe</div>
+        <div id="suki-sprite" class="suki-cat">🐱</div>
+    </div>
+
     <div class="bg-hearts" id="bg-hearts"></div>
 
     <div id="stickmen-container">
@@ -66,7 +96,8 @@
 
     <div id="diary-trigger"><button id="diary-btn" onclick="openDiary()">📖 Our Diary</button></div>
 
-    <div class="screen active" id="screen-start">
+    <!-- START SCREEN (HIDDEN UNTIL OVERLAY FINISHES AT 7s) -->
+    <div class="screen" id="screen-start">
         <h1 id="greeting-text">hi rosana ❤️</h1>
         <button onclick="nextScreen('screen-nav')">Start Now</button>
     </div>
@@ -79,6 +110,7 @@
             <div class="nav-item" onclick="nextScreen('screen-worlds')">🌎 Our Worlds (Clocks)</div>
             <div class="nav-item" onclick="nextScreen('screen-open')">✉️ Open When...</div>
         </div>
+        <button class="back-btn" onclick="nextScreen('screen-start')">Back</button>
     </div>
 
     <div class="screen" id="screen-game">
@@ -194,7 +226,52 @@
             }, 8000);
         }
 
-        window.onload = () => { createHearts(); setTimeout(triggerStartAnimation, 2000); };
+        // EASTER EGG ANIMATION CODE
+        function createEasterEggElements() {
+            const overlay = document.getElementById('easter-egg-overlay');
+            const items = ['❤️', '🐱', '💖', '🐈', '🐾'];
+            for(let i = 0; i < 35; i++) {
+                const el = document.createElement('div');
+                el.className = 'falling-egg';
+                el.innerHTML = items[Math.floor(Math.random() * items.length)];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.top = -Math.random() * 20 - 5 + 'vh';
+                el.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                el.style.animationDuration = (Math.random() * 3 + 2.5) + 's';
+                el.style.animationDelay = (Math.random() * 3) + 's';
+                overlay.appendChild(el);
+            }
+            
+            // Seamless transitions: Hide overlay after exactly 7 seconds and active start screen
+            setTimeout(() => {
+                overlay.style.transition = 'opacity 0.8s ease';
+                overlay.style.opacity = '0';
+                document.getElementById('screen-start').classList.add('active');
+                setTimeout(() => {
+                    overlay.remove();
+                    triggerStartAnimation();
+                }, 800);
+            }, 7000);
+        }
+
+        // Suki idle animation handler every 10 seconds
+        function startSukiAnimations() {
+            const suki = document.getElementById('suki-sprite');
+            const classes = ['suki-jump', 'suki-wiggle', 'suki-spin'];
+            setInterval(() => {
+                const randomAnim = classes[Math.floor(Math.random() * classes.length)];
+                suki.classList.add(randomAnim);
+                setTimeout(() => {
+                    suki.classList.remove(randomAnim);
+                }, 1600);
+            }, 10000);
+        }
+
+        window.onload = () => { 
+            createHearts(); 
+            createEasterEggElements();
+            startSukiAnimations();
+        };
 
         function moveNoBtn() {
             const b = document.getElementById('no-btn');
@@ -302,3 +379,4 @@
     </script>
 </body>
 </html>
+
