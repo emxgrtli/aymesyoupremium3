@@ -70,9 +70,10 @@
     </style>
 </head>
 <body>
-    <!-- EASTER EGG OVERLAY (STAYS COMFORTABLY IN FULLSCREEN FOR 7 SECONDS) -->
+    <!-- EASTER EGG OVERLAY -->
     <div id="easter-egg-overlay">
-        <div class="countdown-headline">only 30 days left baby, we got this!! &lt;3</div>
+        <!-- Content will be injected dynamically via JavaScript to match actual days left -->
+        <div id="intro-headline-container" class="countdown-headline">Loading...</div>
     </div>
 
     <!-- PERMANENT SUKI COMPANION -->
@@ -96,7 +97,6 @@
 
     <div id="diary-trigger"><button id="diary-btn" onclick="openDiary()">📖 Our Diary</button></div>
 
-    <!-- START SCREEN (HIDDEN UNTIL OVERLAY FINISHES AT 7s) -->
     <div class="screen" id="screen-start">
         <h1 id="greeting-text">hi rosana ❤️</h1>
         <button onclick="nextScreen('screen-nav')">Start Now</button>
@@ -153,7 +153,7 @@
 
     <div class="screen" id="screen-jar">
         <h2>Reasons why I like you...</h2>
-        <div id="jar" style="cursor:pointer; font-size: 80px;">🫙</div>
+        <div id="jar" style="cursor:pointer; font-size: 80px;">𫟙</div>
         <div id="reason-text">Tap the jar!</div>
         <button id="jar-next" style="display:none;" onclick="nextScreen('screen-final')">Final Surprise</button>
     </div>
@@ -197,6 +197,7 @@
         let lastScreenId = 'screen-start';
         let score = 0;
         let gameActive = false;
+        const target = new Date("2026-06-15T23:00:00Z").getTime();
 
         const hour = new Date().getHours();
         const gText = document.getElementById('greeting-text');
@@ -226,9 +227,18 @@
             }, 8000);
         }
 
-        // EASTER EGG ANIMATION CODE
+        // EASTER EGG ANIMATION CODE WITH LIVE DAYS CALCULATION
         function createEasterEggElements() {
             const overlay = document.getElementById('easter-egg-overlay');
+            const headlineContainer = document.getElementById('intro-headline-container');
+            
+            // Calculate live days left specifically for the intro screen
+            const diffForIntro = target - new Date().getTime();
+            const currentDaysLeft = Math.floor(diffForIntro / 86400000);
+            
+            // Set dynamic text based on current calculations
+            headlineContainer.innerHTML = `${currentDaysLeft} days left baby, we got this!! &lt;3`;
+
             const items = ['❤️', '🐱', '💖', '🐈', '🐾'];
             for(let i = 0; i < 35; i++) {
                 const el = document.createElement('div');
@@ -356,7 +366,6 @@
             if(rIdx === reasons.length) { document.getElementById('jar-next').style.display='inline-block'; }
         };
 
-        const target = new Date("2026-06-15T23:00:00Z").getTime();
         setInterval(() => {
             const diff = target - new Date().getTime();
             const d = Math.floor(diff / 86400000);
@@ -379,4 +388,3 @@
     </script>
 </body>
 </html>
-
